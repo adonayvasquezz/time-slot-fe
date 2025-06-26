@@ -2,13 +2,14 @@
 
 import React, { useState } from "react";
 import Button from "@/components/ui/Button";
+import Modal from "@/components/ui/Modal";
 import EventForm from "./EventForm";
 import EventList from "./EventList";
 import { Event, CreateEventData } from "@/types/event";
 
 export default function EventManager() {
   const [events, setEvents] = useState<Event[]>([]);
-  const [showForm, setShowForm] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [deletingEventId, setDeletingEventId] = useState<string | null>(null);
@@ -22,7 +23,7 @@ export default function EventManager() {
       };
 
       setEvents((prev) => [...prev, newEvent]);
-      setShowForm(false);
+      setShowModal(false);
     } catch (error) {
       console.error("Error creating event:", error);
     } finally {
@@ -41,7 +42,7 @@ export default function EventManager() {
         )
       );
       setEditingEvent(null);
-      setShowForm(false);
+      setShowModal(false);
     } catch (error) {
       console.error("Error updating event:", error);
     } finally {
@@ -62,11 +63,11 @@ export default function EventManager() {
 
   const handleEdit = (event: Event) => {
     setEditingEvent(event);
-    setShowForm(true);
+    setShowModal(true);
   };
 
   const handleCancel = () => {
-    setShowForm(false);
+    setShowModal(false);
     setEditingEvent(null);
   };
 
@@ -78,23 +79,31 @@ export default function EventManager() {
     }
   };
 
+  const openCreateModal = () => {
+    setEditingEvent(null);
+    setShowModal(true);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-bold text-blue-700">Event Management</h2>
-        {!showForm && (
-          <Button onClick={() => setShowForm(true)}>Create New Event</Button>
-        )}
+        <Button onClick={openCreateModal}>Create New Event</Button>
       </div>
 
-      {showForm && (
+      <Modal
+        isOpen={showModal}
+        onClose={handleCancel}
+        title={editingEvent ? "Edit Event" : "Create New Event"}
+        maxWidth="lg"
+      >
         <EventForm
           event={editingEvent}
           onSubmit={handleSubmit}
           onCancel={handleCancel}
           isLoading={isLoading}
         />
-      )}
+      </Modal>
 
       <div>
         <h3 className="text-md font-semibold text-gray-900 mb-4">
