@@ -41,6 +41,7 @@ export default function EventManager() {
         )
       );
       setEditingEvent(null);
+      setShowForm(false);
     } catch (error) {
       console.error("Error updating event:", error);
     } finally {

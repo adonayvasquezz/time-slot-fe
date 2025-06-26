@@ -3,6 +3,11 @@
 import React, { useState } from "react";
 import Button from "@/components/ui/Button";
 import { Event, CreateEventData } from "@/types/event";
+import {
+  validateEventForm,
+  hasValidationErrors,
+  ValidationErrors,
+} from "@/lib/validation";
 
 interface EventFormProps {
   event: Event | null;
@@ -24,15 +29,29 @@ export default function EventForm({
     end_time: event?.end_time || "",
   });
 
+  const [errors, setErrors] = useState<ValidationErrors>({});
+
+  const validateForm = (): boolean => {
+    const newErrors = validateEventForm(formData);
+    setErrors(newErrors);
+    return !hasValidationErrors(newErrors);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    onSubmit(formData);
+    if (validateForm()) {
+      onSubmit(formData);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+
+    if (errors[name as keyof CreateEventData]) {
+      setErrors((prev) => ({ ...prev, [name]: undefined }));
+    }
   };
 
   return (
@@ -55,9 +74,14 @@ export default function EventForm({
             name="name"
             value={formData.name}
             onChange={handleChange}
-            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              errors.name ? "border-red-500" : "border-gray-300"
+            }`}
             placeholder="Enter event name"
           />
+          {errors.name && (
+            <p className="mt-1 text-sm text-red-600">{errors.name}</p>
+          )}
         </div>
 
         <div>
@@ -73,8 +97,13 @@ export default function EventForm({
             name="date"
             value={formData.date}
             onChange={handleChange}
-            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              errors.date ? "border-red-500" : "border-gray-300"
+            }`}
           />
+          {errors.date && (
+            <p className="mt-1 text-sm text-red-600">{errors.date}</p>
+          )}
         </div>
 
         <div>
@@ -90,8 +119,13 @@ export default function EventForm({
             name="start_time"
             value={formData.start_time}
             onChange={handleChange}
-            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              errors.start_time ? "border-red-500" : "border-gray-300"
+            }`}
           />
+          {errors.start_time && (
+            <p className="mt-1 text-sm text-red-600">{errors.start_time}</p>
+          )}
         </div>
 
         <div>
@@ -107,8 +141,13 @@ export default function EventForm({
             name="end_time"
             value={formData.end_time}
             onChange={handleChange}
-            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              errors.end_time ? "border-red-500" : "border-gray-300"
+            }`}
           />
+          {errors.end_time && (
+            <p className="mt-1 text-sm text-red-600">{errors.end_time}</p>
+          )}
         </div>
 
         <div className="flex gap-3 pt-4">
