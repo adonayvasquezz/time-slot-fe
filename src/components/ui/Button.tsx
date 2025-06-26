@@ -7,6 +7,7 @@ interface ButtonProps {
   size?: "sm" | "md" | "lg";
   className?: string;
   disabled?: boolean;
+  type?: "button" | "submit" | "reset";
 }
 
 export default function Button({
@@ -16,6 +17,7 @@ export default function Button({
   size = "md",
   className = "",
   disabled = false,
+  type = "button",
 }: ButtonProps) {
   const baseClasses =
     "inline-flex items-center justify-center font-medium rounded-md transition-colors focus:outline-none hover:cursor-pointer";
@@ -36,6 +38,7 @@ export default function Button({
 
   return (
     <button
+      type={type}
       onClick={onClick}
       disabled={disabled}
       className={`${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${disabledClasses} ${className}`}
