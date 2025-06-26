@@ -1,9 +1,9 @@
-"use client";
-
 import React from "react";
 import Button from "@/components/ui/Button";
+import { auth0 } from "@/lib/auth0";
 
-export default function Header() {
+export default async function Header() {
+  const session = await auth0.getSession();
   return (
     <header className="bg-white shadow-sm border-b">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -13,9 +13,19 @@ export default function Header() {
           </div>
 
           <div className="flex items-center space-x-4">
-            <Button onClick={() => {}} variant="primary" size="md">
-              Sign In
-            </Button>
+            {session ? (
+              <a href="/auth/logout">
+                <Button variant="primary" size="md">
+                  Sign Out
+                </Button>
+              </a>
+            ) : (
+              <a href="/auth/login?returnTo=/main">
+                <Button variant="primary" size="md">
+                  Sign In
+                </Button>
+              </a>
+            )}
           </div>
         </div>
       </div>
