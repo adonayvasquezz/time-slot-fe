@@ -8,6 +8,8 @@ interface UseEventsReturn {
   error: string | null;
   fetchEvents: () => Promise<void>;
   createEvent: (data: CreateEventData) => Promise<void>;
+  updateEvent: (id: string, data: Partial<CreateEventData>) => Promise<void>;
+  deleteEvent: (id: string) => Promise<void>;
 }
 
 export function useEvents(): UseEventsReturn {
@@ -42,6 +44,36 @@ export function useEvents(): UseEventsReturn {
     }
   };
 
+  const updateEvent = async (id: string, data: Partial<CreateEventData>) => {
+    try {
+      setLoading(true);
+      setError(null);
+      const updatedEvent = await apiService.updateEvent(id, data);
+      setEvents((prev) =>
+        prev.map((event) => (event.id === id ? updatedEvent : event))
+      );
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Update event error");
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteEvent = async (id: string) => {
+    try {
+      setLoading(true);
+      setError(null);
+      await apiService.deleteEvent(id);
+      setEvents((prev) => prev.filter((event) => event.id !== id));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Delete event error");
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchEvents();
   }, []);
@@ -52,5 +84,7 @@ export function useEvents(): UseEventsReturn {
     error,
     fetchEvents,
     createEvent,
+    updateEvent,
+    deleteEvent,
   };
 }

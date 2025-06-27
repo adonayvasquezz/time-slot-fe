@@ -29,10 +29,30 @@ class ApiService {
     return this.request<Event[]>("/events");
   }
 
+  async getEvent(id: string): Promise<Event> {
+    return this.request<Event>(`/events/${id}`);
+  }
+
   async createEvent(data: CreateEventData): Promise<Event> {
     return this.request<Event>("/events", {
       method: "POST",
       body: JSON.stringify(data),
+    });
+  }
+
+  async updateEvent(
+    id: string,
+    data: Partial<CreateEventData>
+  ): Promise<Event> {
+    return this.request<Event>(`/events/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteEvent(id: string): Promise<void> {
+    return this.request<void>(`/events/${id}`, {
+      method: "DELETE",
     });
   }
 }
