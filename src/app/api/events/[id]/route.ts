@@ -14,7 +14,7 @@ export async function GET(
       return NextResponse.json({ error: "No authorized" }, { status: 401 });
     }
 
-    const accessToken = session.accessToken;
+    const accessToken = session.tokenSet.accessToken;
 
     const response = await fetch(`${API_BASE_URL}/events/${params.id}`, {
       headers: {
@@ -50,7 +50,7 @@ export async function PATCH(
     }
     const params = await context.params;
     const body = await request.json();
-    const accessToken = session.accessToken;
+    const accessToken = session.tokenSet.accessToken;
 
     const response = await fetch(`${API_BASE_URL}/events/${params.id}`, {
       method: "PATCH",
@@ -87,7 +87,7 @@ export async function DELETE(
       return NextResponse.json({ error: "No authorized" }, { status: 401 });
     }
 
-    const accessToken = session.accessToken;
+    const accessToken = session.tokenSet.accessToken;
 
     const response = await fetch(`${API_BASE_URL}/events/${params.id}`, {
       method: "DELETE",
