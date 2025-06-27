@@ -6,9 +6,10 @@ import Modal from "@/components/ui/Modal";
 import EventForm from "./EventForm";
 import EventList from "./EventList";
 import { Event, CreateEventData } from "@/types/event";
+import { useEvents } from "@/hooks/useEvents";
 
 export default function EventManager() {
-  const [events, setEvents] = useState<Event[]>([]);
+  const { events, loading, error, createEvent } = useEvents();
   const [showModal, setShowModal] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -22,7 +23,7 @@ export default function EventManager() {
         ...data,
       };
 
-      setEvents((prev) => [...prev, newEvent]);
+      //setEvents((prev) => [...prev, newEvent]);
       setShowModal(false);
     } catch (error) {
       console.error("Error creating event:", error);
@@ -31,7 +32,7 @@ export default function EventManager() {
     }
   };
 
-  const handleUpdateEvent = async (data: CreateEventData) => {
+  /* const handleUpdateEvent = async (data: CreateEventData) => {
     if (!editingEvent) return;
 
     setIsLoading(true);
@@ -48,12 +49,12 @@ export default function EventManager() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }; */
 
   const handleDeleteEvent = async (eventId: string) => {
     setDeletingEventId(eventId);
     try {
-      setEvents((prev) => prev.filter((event) => event.id !== eventId));
+      //setEvents((prev) => prev.filter((event) => event.id !== eventId));
     } catch (error) {
       console.error("Error deleting event:", error);
     } finally {
@@ -73,7 +74,7 @@ export default function EventManager() {
 
   const handleSubmit = (data: CreateEventData) => {
     if (editingEvent) {
-      handleUpdateEvent(data);
+      //handleUpdateEvent(data);
     } else {
       handleCreateEvent(data);
     }

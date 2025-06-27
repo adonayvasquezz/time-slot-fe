@@ -19,7 +19,7 @@ export default function EventCard({
     <div className="bg-white p-4 rounded-lg shadow-md border border-gray-200 hover:shadow-lg transition-shadow">
       <div className="flex justify-between items-start mb-3">
         <h3 className="text-lg font-semibold text-gray-900 truncate flex-1">
-          {event.name}
+          {event.title}
         </h3>
       </div>
 
@@ -31,11 +31,11 @@ export default function EventCard({
           </div>
           <div className="flex items-center text-sm text-gray-600">
             <span className="font-medium mr-2">Start:</span>
-            <span>{event.start_time}</span>
+            <span>{event.startTime}</span>
           </div>
           <div className="flex items-center text-sm text-gray-600">
             <span className="font-medium mr-2">End:</span>
-            <span>{event.end_time}</span>
+            <span>{event.endTime}</span>
           </div>
         </div>
 
