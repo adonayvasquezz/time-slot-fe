@@ -153,9 +153,6 @@ export default function EventForm({
         </div>
 
         <div className="flex gap-3 pt-4">
-          <Button type="submit" disabled={isLoading} className="flex-1">
-            {isLoading ? "Saving..." : event ? "Update" : "Create"}
-          </Button>
           <Button
             type="button"
             variant="outline"
@@ -164,6 +161,9 @@ export default function EventForm({
             className="flex-1"
           >
             Cancel
+          </Button>
+          <Button type="submit" disabled={isLoading} className="flex-1">
+            {isLoading ? "Saving..." : event ? "Update" : "Create"}
           </Button>
         </div>
       </form>

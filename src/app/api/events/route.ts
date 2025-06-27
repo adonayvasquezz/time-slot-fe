@@ -12,7 +12,6 @@ export async function GET(request: NextRequest) {
     }
 
     const accessToken = session.tokenSet.accessToken;
-    console.log("accessToken", accessToken);
 
     const response = await fetch(`${API_BASE_URL}/events`, {
       headers: {
