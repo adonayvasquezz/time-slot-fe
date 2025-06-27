@@ -9,6 +9,7 @@ import {
   ValidationErrors,
 } from "@/lib/validation";
 import { timeToDateString } from "@/lib/time-to-date";
+import { dateToTime, dateToDateInput } from "@/lib/date-to-time";
 
 interface EventFormProps {
   event: Event | null;
@@ -25,9 +26,9 @@ export default function EventForm({
 }: EventFormProps) {
   const [formData, setFormData] = useState<CreateEventData>({
     title: event?.title || "",
-    date: event?.date || "",
-    startTime: event?.startTime || "",
-    endTime: event?.endTime || "",
+    date: event?.date ? dateToDateInput(event.date) : "",
+    startTime: event?.startTime ? dateToTime(event.startTime) : "",
+    endTime: event?.endTime ? dateToTime(event.endTime) : "",
   });
 
   const [errors, setErrors] = useState<ValidationErrors>({});

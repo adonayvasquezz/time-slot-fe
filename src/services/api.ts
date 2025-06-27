@@ -45,7 +45,7 @@ class ApiService {
     data: Partial<CreateEventData>
   ): Promise<Event> {
     return this.request<Event>(`/events/${id}`, {
-      method: "PUT",
+      method: "PATCH",
       body: JSON.stringify(data),
     });
   }

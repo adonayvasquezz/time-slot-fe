@@ -38,9 +38,9 @@ export async function GET(
   }
 }
 
-export async function PUT(
+export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
     const session = await auth0.getSession();
@@ -48,12 +48,12 @@ export async function PUT(
     if (!session?.user) {
       return NextResponse.json({ error: "No authorized" }, { status: 401 });
     }
-
+    const params = await context.params;
     const body = await request.json();
     const accessToken = session.accessToken;
 
     const response = await fetch(`${API_BASE_URL}/events/${params.id}`, {
-      method: "PUT",
+      method: "PATCH",
       headers: {
         Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
