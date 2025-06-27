@@ -18,12 +18,7 @@ export default function EventManager() {
   const handleCreateEvent = async (data: CreateEventData) => {
     setIsLoading(true);
     try {
-      const newEvent: Event = {
-        id: Date.now().toString(),
-        ...data,
-      };
-
-      //setEvents((prev) => [...prev, newEvent]);
+      createEvent(data);
       setShowModal(false);
     } catch (error) {
       console.error("Error creating event:", error);

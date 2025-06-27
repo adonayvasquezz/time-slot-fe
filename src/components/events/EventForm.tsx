@@ -8,6 +8,7 @@ import {
   hasValidationErrors,
   ValidationErrors,
 } from "@/lib/validation";
+import { timeToDateString } from "@/lib/time-to-date";
 
 interface EventFormProps {
   event: Event | null;
@@ -23,10 +24,10 @@ export default function EventForm({
   isLoading = false,
 }: EventFormProps) {
   const [formData, setFormData] = useState<CreateEventData>({
-    name: event?.name || "",
+    title: event?.title || "",
     date: event?.date || "",
-    start_time: event?.start_time || "",
-    end_time: event?.end_time || "",
+    startTime: event?.startTime || "",
+    endTime: event?.endTime || "",
   });
 
   const [errors, setErrors] = useState<ValidationErrors>({});
@@ -39,9 +40,13 @@ export default function EventForm({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
     if (validateForm()) {
-      onSubmit(formData);
+      const dataFomatted: CreateEventData = {
+        ...formData,
+        startTime: timeToDateString(formData.startTime),
+        endTime: timeToDateString(formData.endTime),
+      };
+      onSubmit(dataFomatted);
     }
   };
 
@@ -59,24 +64,24 @@ export default function EventForm({
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label
-            htmlFor="name"
+            htmlFor="title"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            Event Name
+            Event Title
           </label>
           <input
             type="text"
-            id="name"
-            name="name"
-            value={formData.name}
+            id="title"
+            name="title"
+            value={formData.title}
             onChange={handleChange}
             className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-              errors.name ? "border-red-500" : "border-gray-300"
+              errors.title ? "border-red-500" : "border-gray-300"
             }`}
             placeholder="Enter event name"
           />
-          {errors.name && (
-            <p className="mt-1 text-sm text-red-600">{errors.name}</p>
+          {errors.title && (
+            <p className="mt-1 text-sm text-red-600">{errors.title}</p>
           )}
         </div>
 
@@ -104,45 +109,45 @@ export default function EventForm({
 
         <div>
           <label
-            htmlFor="start_time"
+            htmlFor="startTime"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
             Start Time
           </label>
           <input
             type="time"
-            id="start_time"
-            name="start_time"
-            value={formData.start_time}
+            id="startTime"
+            name="startTime"
+            value={formData.startTime}
             onChange={handleChange}
             className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-              errors.start_time ? "border-red-500" : "border-gray-300"
+              errors.startTime ? "border-red-500" : "border-gray-300"
             }`}
           />
-          {errors.start_time && (
-            <p className="mt-1 text-sm text-red-600">{errors.start_time}</p>
+          {errors.startTime && (
+            <p className="mt-1 text-sm text-red-600">{errors.startTime}</p>
           )}
         </div>
 
         <div>
           <label
-            htmlFor="end_time"
+            htmlFor="endTime"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
             End Time
           </label>
           <input
             type="time"
-            id="end_time"
-            name="end_time"
-            value={formData.end_time}
+            id="endTime"
+            name="endTime"
+            value={formData.endTime}
             onChange={handleChange}
             className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-              errors.end_time ? "border-red-500" : "border-gray-300"
+              errors.endTime ? "border-red-500" : "border-gray-300"
             }`}
           />
-          {errors.end_time && (
-            <p className="mt-1 text-sm text-red-600">{errors.end_time}</p>
+          {errors.endTime && (
+            <p className="mt-1 text-sm text-red-600">{errors.endTime}</p>
           )}
         </div>
 
