@@ -1,6 +1,8 @@
 import React from "react";
 import Button from "@/components/ui/Button";
 import { Event } from "@/types/event";
+import { formatDate } from "@/lib/format-date";
+import { dateToTime } from "@/lib/date-to-time";
 
 interface EventCardProps {
   event: Event;
@@ -27,15 +29,15 @@ export default function EventCard({
         <div className="space-y-2">
           <div className="flex items-center text-sm text-gray-600">
             <span className="font-medium mr-2">Date:</span>
-            <span>{event.date}</span>
+            <span>{formatDate(event.date)}</span>
           </div>
           <div className="flex items-center text-sm text-gray-600">
             <span className="font-medium mr-2">Start:</span>
-            <span>{event.startTime}</span>
+            <span>{dateToTime(event.startTime)}</span>
           </div>
           <div className="flex items-center text-sm text-gray-600">
             <span className="font-medium mr-2">End:</span>
-            <span>{event.endTime}</span>
+            <span>{dateToTime(event.endTime)}</span>
           </div>
         </div>
 
