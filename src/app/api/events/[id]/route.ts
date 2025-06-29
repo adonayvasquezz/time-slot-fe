@@ -90,13 +90,20 @@ export async function DELETE(
     }
 
     const accessToken = session.tokenSet.accessToken;
+    const googleToken = await getCachedGoogleToken(session.user.sub);
+
+    const headers: Record<string, string> = {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    };
+
+    if (googleToken) {
+      headers["X-Google-Token"] = googleToken;
+    }
 
     const response = await fetch(`${API_BASE_URL}/events/${params.id}`, {
       method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-      },
+      headers,
     });
 
     if (!response.ok) {
