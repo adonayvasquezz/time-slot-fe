@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth0 } from "@/lib/auth0";
+import { auth0, getCachedGoogleToken } from "@/lib/auth0";
 
 const API_BASE_URL = process.env.API_BASE_URL;
 
@@ -30,11 +30,7 @@ export async function GET(
     const event = await response.json();
     return NextResponse.json(event);
   } catch (error) {
-    console.error("Failed to get event:", error);
-    return NextResponse.json(
-      { error: "Failed to get event:" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to get event" }, { status: 500 });
   }
 }
 
@@ -51,13 +47,20 @@ export async function PATCH(
     const params = await context.params;
     const body = await request.json();
     const accessToken = session.tokenSet.accessToken;
+    const googleToken = await getCachedGoogleToken(session.user.sub);
+
+    const headers: Record<string, string> = {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    };
+
+    if (googleToken) {
+      headers["X-Google-Token"] = googleToken;
+    }
 
     const response = await fetch(`${API_BASE_URL}/events/${params.id}`, {
       method: "PATCH",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-      },
+      headers,
       body: JSON.stringify(body),
     });
 
@@ -68,7 +71,6 @@ export async function PATCH(
     const event = await response.json();
     return NextResponse.json(event);
   } catch (error) {
-    console.error("Failed to update event:", error);
     return NextResponse.json(
       { error: "Failed to update event" },
       { status: 500 }
@@ -78,11 +80,11 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
     const session = await auth0.getSession();
-
+    const params = await context.params;
     if (!session?.user) {
       return NextResponse.json({ error: "No authorized" }, { status: 401 });
     }
@@ -103,7 +105,6 @@ export async function DELETE(
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Failed to delete:", error);
     return NextResponse.json({ error: "Failed to delete" }, { status: 500 });
   }
 }

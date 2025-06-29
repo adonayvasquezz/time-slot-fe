@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth0 } from "@/lib/auth0";
+import { auth0, getCachedGoogleToken } from "@/lib/auth0";
 
 const API_BASE_URL = process.env.API_BASE_URL;
 
@@ -27,9 +27,8 @@ export async function GET(request: NextRequest) {
     const events = await response.json();
     return NextResponse.json(events);
   } catch (error) {
-    console.error("Failed to get events:", error);
     return NextResponse.json(
-      { error: "Failed to get events:" },
+      { error: "Failed to get events" },
       { status: 500 }
     );
   }
@@ -45,13 +44,20 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
     const accessToken = session.tokenSet.accessToken;
+    const googleToken = await getCachedGoogleToken(session.user.sub);
+
+    const headers: Record<string, string> = {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    };
+
+    if (googleToken) {
+      headers["X-Google-Token"] = googleToken;
+    }
 
     const response = await fetch(`${API_BASE_URL}/events`, {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-      },
+      headers,
       body: JSON.stringify(body),
     });
 
@@ -62,9 +68,8 @@ export async function POST(request: NextRequest) {
     const event = await response.json();
     return NextResponse.json(event);
   } catch (error) {
-    console.error("Failed to create event:", error);
     return NextResponse.json(
-      { error: "Failed to create event:" },
+      { error: "Failed to create event" },
       { status: 500 }
     );
   }

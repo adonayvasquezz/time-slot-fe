@@ -6,7 +6,7 @@ import Modal from "@/components/ui/Modal";
 import EventForm from "./EventForm";
 import EventList from "./EventList";
 import { Event, CreateEventData } from "@/types/event";
-import { useEvents } from "@/hooks/useEvents";
+import { useEvents } from "@/hooks";
 
 export default function EventManager() {
   const { events, loading, error, createEvent, updateEvent, deleteEvent } =
