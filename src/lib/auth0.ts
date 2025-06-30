@@ -1,7 +1,8 @@
 import { Auth0Client } from "@auth0/nextjs-auth0/server";
 import { googleTokenCache } from "./google-token-cache";
+import { auth0Config } from "./auth0-config";
 
-export const auth0 = new Auth0Client();
+export const auth0 = new Auth0Client({ ...auth0Config });
 
 async function getManagementApiToken(): Promise<string> {
   try {

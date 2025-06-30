@@ -5,17 +5,14 @@ const API_BASE_URL = process.env.API_BASE_URL;
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth0.getSession();
-
-    if (!session?.user) {
-      return NextResponse.json({ error: "No authorized" }, { status: 401 });
+    const accessToken = await auth0.getAccessToken();
+    if (!accessToken?.token) {
+      return NextResponse.json({ error: "Not authorized" }, { status: 401 });
     }
-
-    const accessToken = session.tokenSet.accessToken;
 
     const response = await fetch(`${API_BASE_URL}/events`, {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${accessToken.token}`,
         "Content-Type": "application/json",
       },
     });
@@ -39,7 +36,7 @@ export async function POST(request: NextRequest) {
     const session = await auth0.getSession();
 
     if (!session?.user) {
-      return NextResponse.json({ error: "No authorized" }, { status: 401 });
+      return NextResponse.json({ error: "Not authorized" }, { status: 401 });
     }
 
     const body = await request.json();
