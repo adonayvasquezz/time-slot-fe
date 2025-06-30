@@ -19,7 +19,7 @@ export default function EventManager() {
   const handleCreateEvent = async (data: CreateEventData) => {
     setIsLoading(true);
     try {
-      createEvent(data);
+      await createEvent(data);
       setShowModal(false);
     } catch (error) {
       console.error("Error creating event:", error);

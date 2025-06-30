@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Event, CreateEventData } from "@/types/event";
 import { apiService } from "@/services/api";
+import toast from "react-hot-toast";
 
 interface UseEventsReturn {
   events: Event[];
@@ -17,6 +18,17 @@ export function useEvents(): UseEventsReturn {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const showErrorToast = (message: string) => {
+    toast.error(message, {
+      duration: 5000,
+      style: {
+        background: "#fef2f2",
+        color: "#dc2626",
+        border: "1px solid #fecaca",
+      },
+    });
+  };
+
   const fetchEvents = async () => {
     try {
       setLoading(true);
@@ -24,7 +36,9 @@ export function useEvents(): UseEventsReturn {
       const data = await apiService.getEvents();
       setEvents(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Loading error");
+      const errorMessage = err instanceof Error ? err.message : "Loading error";
+      setError(errorMessage);
+      showErrorToast(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -36,8 +50,12 @@ export function useEvents(): UseEventsReturn {
       setError(null);
       const newEvent = await apiService.createEvent(data);
       setEvents((prev) => [...prev, newEvent]);
+      toast.success("Evento creado exitosamente");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Create event error");
+      const errorMessage =
+        err instanceof Error ? err.message : "Create event error";
+      setError(errorMessage);
+      showErrorToast(errorMessage);
       throw err;
     } finally {
       setLoading(false);
@@ -52,8 +70,12 @@ export function useEvents(): UseEventsReturn {
       setEvents((prev) =>
         prev.map((event) => (event.id === id ? updatedEvent : event))
       );
+      toast.success("Evento actualizado exitosamente");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Update event error");
+      const errorMessage =
+        err instanceof Error ? err.message : "Update event error";
+      setError(errorMessage);
+      showErrorToast(errorMessage);
       throw err;
     } finally {
       setLoading(false);
@@ -66,8 +88,12 @@ export function useEvents(): UseEventsReturn {
       setError(null);
       await apiService.deleteEvent(id);
       setEvents((prev) => prev.filter((event) => event.id !== id));
+      toast.success("Evento eliminado exitosamente");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Delete event error");
+      const errorMessage =
+        err instanceof Error ? err.message : "Delete event error";
+      setError(errorMessage);
+      showErrorToast(errorMessage);
       throw err;
     } finally {
       setLoading(false);

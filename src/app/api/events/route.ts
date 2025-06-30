@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth0, getCachedGoogleToken } from "@/lib/auth0";
+import { formatEventDates } from "@/lib/event-date-formatter";
 
 const API_BASE_URL = process.env.API_BASE_URL;
 
@@ -41,6 +42,8 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
+    const formattedBody = formatEventDates(body);
+
     const googleToken = await getCachedGoogleToken(session.user.sub);
 
     const headers: Record<string, string> = {
@@ -55,11 +58,15 @@ export async function POST(request: NextRequest) {
     const response = await fetch(`${API_BASE_URL}/events`, {
       method: "POST",
       headers,
-      body: JSON.stringify(body),
+      body: JSON.stringify(formattedBody),
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to create event: `);
+      const errorData = await response.json();
+      return NextResponse.json(
+        { error: errorData.message || "Failed to create event" },
+        { status: response.status }
+      );
     }
 
     const event = await response.json();
