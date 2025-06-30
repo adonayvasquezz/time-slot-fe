@@ -34,17 +34,17 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const session = await auth0.getSession();
+    const accessToken = await auth0.getAccessToken();
 
-    if (!session?.user) {
+    if (!accessToken?.token || !session?.user?.sub) {
       return NextResponse.json({ error: "Not authorized" }, { status: 401 });
     }
 
     const body = await request.json();
-    const accessToken = session.tokenSet.accessToken;
     const googleToken = await getCachedGoogleToken(session.user.sub);
 
     const headers: Record<string, string> = {
-      Authorization: `Bearer ${accessToken}`,
+      Authorization: `Bearer ${accessToken.token}`,
       "Content-Type": "application/json",
     };
 
@@ -59,12 +59,13 @@ export async function POST(request: NextRequest) {
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to create event: ${response.status}`);
+      throw new Error(`Failed to create event: `);
     }
 
     const event = await response.json();
     return NextResponse.json(event);
   } catch (error) {
+    console.error("Error creating event:", error);
     return NextResponse.json(
       { error: "Failed to create event" },
       { status: 500 }
