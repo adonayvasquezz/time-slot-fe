@@ -84,16 +84,17 @@ export async function DELETE(
 ) {
   try {
     const session = await auth0.getSession();
+    const accessToken = await auth0.getAccessToken();
     const params = await context.params;
-    if (!session?.user) {
-      return NextResponse.json({ error: "No authorized" }, { status: 401 });
+
+    if (!accessToken?.token || !session?.user?.sub) {
+      return NextResponse.json({ error: "Not authorized" }, { status: 401 });
     }
 
-    const accessToken = session.tokenSet.accessToken;
     const googleToken = await getCachedGoogleToken(session.user.sub);
 
     const headers: Record<string, string> = {
-      Authorization: `Bearer ${accessToken}`,
+      Authorization: `Bearer ${accessToken.token}`,
       "Content-Type": "application/json",
     };
 
